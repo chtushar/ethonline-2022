@@ -1,18 +1,22 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-  const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS;
+  const [owner] = await ethers.getSigners();
+  const domainContractFactory = await ethers.getContractFactory('Domains');
+  const domainContract = await domainContractFactory.deploy("cross");
+  await domainContract.deployed();
 
-  const lockedAmount = ethers.utils.parseEther("1");
+  console.log("Contract deployed to:", domainContract.address);
+  
+  // let txn = await domainContract.register("doom",  owner.address, owner.address, {value: ethers.utils.parseEther('0.0001')});
+  // await txn.wait();
+  // console.log("Minted domain doom.cross");
 
-  const Lock = await ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+  // const nft = await domainContract.get("doom");
+  // console.log("Owner of domain owner:", nft);
 
-  await lock.deployed();
-
-  console.log(`Lock with 1 ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`);
+  // const balance = await ethers.provider.getBalance(domainContract.address);
+  // console.log("Contract balance:", ethers.utils.formatEther(balance));
 }
 
 // We recommend this pattern to be able to use async/await everywhere
